@@ -17,7 +17,7 @@ async function postDeploy(properties: Map<string, unknown>): Promise<void> {
 
   const apiRoot = createApiRoot();
   await createCartUpdateExtension(apiRoot, applicationUrl);
-  await createCustomCartDiscountType(apiRoot);
+  // await createCustomCartDiscountType(apiRoot);
 }
 
 async function run(): Promise<void> {

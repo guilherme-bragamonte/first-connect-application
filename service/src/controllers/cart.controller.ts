@@ -3,6 +3,7 @@ import { UpdateAction } from '@commercetools/sdk-client-v2';
 import { createApiRoot } from '../client/create.client';
 import CustomError from '../errors/custom.error';
 import { Resource } from '../interfaces/resource.interface';
+import { logger } from '../utils/logger.utils';
 
 /**
  * Handle the create action
@@ -72,7 +73,19 @@ export const cartController = async (action: string, resource: Resource) => {
       return data;
     }
     case 'Update':
-      break;
+      logger.info('Cart update action received');
+      const customObject = await createApiRoot()
+        .customObjects()
+        .post({
+          body: {
+            container: 'test-connect-container',
+            key: 'test-service-key',
+            value: resource
+          }
+        })
+        .execute();
+      logger.info(JSON.stringify({ customObject }));
+      return { statusCode: 200, actions: [] };
 
     default:
       throw new CustomError(
