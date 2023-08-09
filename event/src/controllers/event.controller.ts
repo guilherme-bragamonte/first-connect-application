@@ -56,7 +56,19 @@ export const post = async (request: Request, response: Response) => {
       .execute();
 
     // Execute the tasks in need
-    logger.info(customer);
+    logger.info(JSON.stringify({customer}));
+    // Store event into a custom object
+    const customObject = await createApiRoot()
+      .customObjects()
+      .post({
+        body: {
+          container: 'test-connect-container',
+          key: 'test-event-key',
+          value: decodedData
+        }
+      })
+      .execute();
+      logger.info(JSON.stringify({ customObject }));
   } catch (error) {
     throw new CustomError(400, `Bad request: ${error}`);
   }
