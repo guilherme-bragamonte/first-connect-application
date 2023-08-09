@@ -35,11 +35,14 @@ export const post = async (request: Request, response: Response) => {
     ? Buffer.from(pubSubMessage.data, 'base64').toString().trim()
     : undefined;
 
-  if (decodedData) {
-    const jsonData = JSON.parse(decodedData);
-
-    customerId = jsonData.customer.id;
+  // Check if the decoded data is valid
+  if (!decodedData) {
+    logger.error('Invalid decodedData variable');
+    throw new CustomError(400, 'Bad request: Invalid decoded data');
   }
+
+  const jsonData = JSON.parse(decodedData);
+  customerId = jsonData.customer.id;
 
   if (!customerId) {
     throw new CustomError(
@@ -56,7 +59,19 @@ export const post = async (request: Request, response: Response) => {
       .execute();
 
     // Execute the tasks in need
-    logger.info(customer);
+    logger.info(JSON.stringify({ customer }));
+    // Store event into a custom object
+    const customObject = await createApiRoot()
+      .customObjects()
+      .post({
+        body: {
+          container: 'test-connect-container',
+          key: 'test-event-key',
+          value: jsonData
+        }
+      })
+      .execute();
+    logger.info(JSON.stringify({ customObject }));
   } catch (error) {
     throw new CustomError(400, `Bad request: ${error}`);
   }
