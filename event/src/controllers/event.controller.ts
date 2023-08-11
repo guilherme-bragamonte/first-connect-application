@@ -18,6 +18,9 @@ export const post = async (request: Request, response: Response) => {
     throw new CustomError(400, 'Bad request: No Pub/Sub message was received');
   }
 
+  const requestBody = request.body;
+  logger.info(JSON.stringify({ requestBody }));
+
   // Check if the body comes in a message
   if (!request.body.message) {
     logger.error('Missing body message');
