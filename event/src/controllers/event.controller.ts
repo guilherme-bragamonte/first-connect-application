@@ -22,13 +22,13 @@ export const post = async (request: Request, response: Response) => {
   logger.info(JSON.stringify({ requestBody }));
 
   // Check if the body comes in a message
-  if (!request.body.message) {
+  if (!requestBody.message) {
     logger.error('Missing body message');
     throw new CustomError(400, 'Bad request: Wrong No Pub/Sub message format');
   }
 
   // Receive the Pub/Sub message
-  const pubSubMessage = request.body.message;
+  const pubSubMessage = requestBody.message;
 
   // Decode base64 data
   const decodedData = pubSubMessage.data
@@ -44,10 +44,8 @@ export const post = async (request: Request, response: Response) => {
   const jsonData = JSON.parse(decodedData);
   
   if (!jsonData?.order?.id) {
-    throw new CustomError(
-      400,
-      'Bad request: No order id in the Pub/Sub message'
-    );
+    logger.info('No order id in the Pub/Sub message. Skipping it...');
+    return response.status(200).send('No order id in the Pub/Sub message. Skipped!');
   }
 
   try {
