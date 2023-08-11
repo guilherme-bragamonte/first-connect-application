@@ -1,43 +1,20 @@
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 
-const CUSTOMER_CREATE_SUBSCRIPTION_KEY =
-  'myconnector-customerCreateSubscription';
+const ORDER_CREATED_SUBSCRIPTION_KEY =
+  'myconnector-orderCreatedSubscription';
 
-export async function createCustomerCreateSubscription(
+export async function createOrderCreatedSubscription(
   apiRoot: ByProjectKeyRequestBuilder,
   topicName: string,
   projectId: string
 ): Promise<void> {
-  const {
-    body: { results: subscriptions },
-  } = await apiRoot
-    .subscriptions()
-    .get({
-      queryArgs: {
-        where: `key = "${CUSTOMER_CREATE_SUBSCRIPTION_KEY}"`,
-      },
-    })
-    .execute();
-
-  if (subscriptions.length > 0) {
-    const subscription = subscriptions[0];
-
-    await apiRoot
-      .subscriptions()
-      .withKey({ key: CUSTOMER_CREATE_SUBSCRIPTION_KEY })
-      .delete({
-        queryArgs: {
-          version: subscription.version,
-        },
-      })
-      .execute();
-  }
+  await deleteOrderCreatedSubscription(apiRoot);
 
   await apiRoot
     .subscriptions()
     .post({
       body: {
-        key: CUSTOMER_CREATE_SUBSCRIPTION_KEY,
+        key: ORDER_CREATED_SUBSCRIPTION_KEY,
         destination: {
           type: 'GoogleCloudPubSub',
           topic: topicName,
@@ -45,8 +22,8 @@ export async function createCustomerCreateSubscription(
         },
         messages: [
           {
-            resourceTypeId: 'customer',
-            types: ['CustomerCreated'],
+            resourceTypeId: 'order',
+            types: ['OrderCreated'],
           },
         ],
       },
@@ -54,7 +31,7 @@ export async function createCustomerCreateSubscription(
     .execute();
 }
 
-export async function deleteCustomerCreateSubscription(
+export async function deleteOrderCreatedSubscription(
   apiRoot: ByProjectKeyRequestBuilder
 ): Promise<void> {
   const {
@@ -63,7 +40,7 @@ export async function deleteCustomerCreateSubscription(
     .subscriptions()
     .get({
       queryArgs: {
-        where: `key = "${CUSTOMER_CREATE_SUBSCRIPTION_KEY}"`,
+        where: `key = "${ORDER_CREATED_SUBSCRIPTION_KEY}"`,
       },
     })
     .execute();
@@ -73,7 +50,7 @@ export async function deleteCustomerCreateSubscription(
 
     await apiRoot
       .subscriptions()
-      .withKey({ key: CUSTOMER_CREATE_SUBSCRIPTION_KEY })
+      .withKey({ key: ORDER_CREATED_SUBSCRIPTION_KEY })
       .delete({
         queryArgs: {
           version: subscription.version,

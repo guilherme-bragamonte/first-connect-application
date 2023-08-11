@@ -12,8 +12,6 @@ import { logger } from '../utils/logger.utils';
  * @returns
  */
 export const post = async (request: Request, response: Response) => {
-  let customerId = undefined;
-
   // Check request body
   if (!request.body) {
     logger.error('Missing request body.');
@@ -29,8 +27,7 @@ export const post = async (request: Request, response: Response) => {
   // Receive the Pub/Sub message
   const pubSubMessage = request.body.message;
 
-  // For our example we will use the customer id as a var
-  // and the query the commercetools sdk with that info
+  // Decode base64 data
   const decodedData = pubSubMessage.data
     ? Buffer.from(pubSubMessage.data, 'base64').toString().trim()
     : undefined;
@@ -42,26 +39,19 @@ export const post = async (request: Request, response: Response) => {
   }
 
   const jsonData = JSON.parse(decodedData);
-  customerId = jsonData.customer.id;
-
-  if (!customerId) {
+  
+  if (!jsonData?.order?.id) {
     throw new CustomError(
       400,
-      'Bad request: No customer id in the Pub/Sub message'
+      'Bad request: No order id in the Pub/Sub message'
     );
   }
 
   try {
-    const customer = await createApiRoot()
-      .customers()
-      .withId({ ID: Buffer.from(customerId).toString() })
-      .get()
-      .execute();
-
-    // Execute the tasks in need
-    logger.info(JSON.stringify({ customer }));
+    // Log the complete input event
+    logger.info(JSON.stringify({ jsonData }));
     // Store event into a custom object
-    const customObject = await createApiRoot()
+    const createdCustomObject = await createApiRoot()
       .customObjects()
       .post({
         body: {
@@ -71,7 +61,7 @@ export const post = async (request: Request, response: Response) => {
         }
       })
       .execute();
-    logger.info(JSON.stringify({ customObject }));
+    logger.info(JSON.stringify({ createdCustomObject }));
   } catch (error) {
     throw new CustomError(400, `Bad request: ${error}`);
   }
