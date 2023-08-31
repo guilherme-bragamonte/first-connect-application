@@ -18,9 +18,7 @@ jobs:
       with:
         cache: 'yarn'
         cache-dependency-path: '**/yarn.lock'
-    
-    # - run: yarn
 
     - name: Testing `event` folder...
       working-directory: event
-      run: yarn test
+      run: yarn && yarn test
