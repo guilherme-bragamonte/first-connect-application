@@ -11,8 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
-      matrix:
-        working-directory: ['event', 'job']
+      matrix: { dir: ['event', 'job'] }
     # defaults:
     #   run:
     #     working-directory: event
