@@ -20,6 +20,7 @@ jobs:
       uses: actions/setup-node@v3
       with:
         cache: 'yarn'
+        cache-dependency-path: '**/yarn-lock.json'
     - run: ls -la
     - run: yarn
     - run: yarn test
