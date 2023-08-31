@@ -9,13 +9,7 @@ jobs:
   test-event-folder:
 
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix: { dir: ['event', 'job'] }
-    # defaults:
-    #   run:
-    #     working-directory: event
-        
+    
     steps:
     - uses: actions/checkout@v3
     
@@ -25,8 +19,8 @@ jobs:
         cache: 'yarn'
         cache-dependency-path: '**/yarn.lock'
     
-    - run: ls -la
-    
-    - run: yarn
-    
-    - run: yarn test
+    # - run: yarn
+
+    - name: Testing `event` folder...
+      working-directory: event
+      run: yarn test
