@@ -6,18 +6,16 @@ name: Node.js CI
 on: ['push']
 
 jobs:
-  build:
+  test-event-folder:
 
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [16.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
+    
+    defaults:
+      run:
+        working-directory: ./event
+        
     steps:
     - uses: actions/checkout@v3
-    - run: cd event
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
