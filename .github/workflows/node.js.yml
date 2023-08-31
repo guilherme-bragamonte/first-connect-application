@@ -10,9 +10,9 @@ jobs:
 
     runs-on: ubuntu-latest
     
-    # defaults:
-    #   run:
-    #     working-directory: ./event
+    defaults:
+      run:
+        working-directory: event
         
     steps:
     - uses: actions/checkout@v3
