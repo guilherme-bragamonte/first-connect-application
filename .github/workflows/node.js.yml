@@ -6,7 +6,7 @@ name: Node.js CI
 on: ['push']
 
 jobs:
-  test-event-folder:
+  test-apps:
 
     runs-on: ubuntu-latest
     
@@ -21,4 +21,12 @@ jobs:
 
     - name: Testing `event` folder...
       working-directory: event
-      run: yarn && yarn test
+      run: yarn && yarn lint && yarn test
+    
+    - name: Testing `job` folder...
+      working-directory: job
+      run: yarn && yarn lint && yarn test
+    
+    - name: Testing `service` folder...
+      working-directory: service
+      run: yarn && yarn lint && yarn test
